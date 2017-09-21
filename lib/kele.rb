@@ -35,4 +35,32 @@ class Kele
     JSON.parse(response.body)
   end
 
+  def get_messages(page = nil)
+    url = "https://www.bloc.io/api/v1/message_threads"
+    if page
+      values = {
+        "page": page
+      }
+    else
+      values = {}
+    end
+    response = self.class.get(url, {headers: {"authorization" => @auth_token}, query: values})
+    JSON.parse(response.body)
+  end
+
+  def create_message(email, recipient, subject, body, thread = nil )
+    url = "https://www.bloc.io/api/v1/messages"
+    values = {
+      "sender": email,
+      "recipient_id": recipient,
+      "stripped-text": body,
+      "subject": subject,
+    }
+    if thread
+      values["token"] = thread
+    end
+    response = self.class.post(url, {headers: {"authorization" => @auth_token}, query: values})
+    response
+  end
+
 end
